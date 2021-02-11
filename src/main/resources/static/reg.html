@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>注册云相册</title>
+    <script src="../js/ajax.js"></script>
+    <script src="../js/reg.js"></script>
+    <script src="../js/tips.js"></script>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/tips.css">
+    <script type="text/javascript">
+        window.onload = function(){
+            (function() {
+                var docElem = document.documentElement;
+                if(!(docElem.getBoundingClientRect().width > 860)) {
+                    docElem.style.fontSize = docElem.getBoundingClientRect().width / 16 + "px";
+                    docElem.style.width = docElem.getBoundingClientRect().width;
+                }
+                document.querySelector(".tips").style.height = window.innerHeight + "px";
+            })()
+        };
+    </script>
+    <style>
+       
+    </style>
+    
+</head>
+<body>
+    <div class="login-box">
+        <div class="box-head-text">欢迎注册云相册</div>
+        <div class="input-group">
+            <div class="input-box">
+                <span class="input-text">用户名</span>
+                <input type="text" class="input" id="user" autocomplete="off">
+            </div>
+            <div class="input-box">
+               <span class="input-text">密码</span>
+                <input type="password" class="input" id="passwordone" autocomplete="off">
+            </div>
+            <div class="input-box">
+                <span class="input-text">确认密码</span>
+                 <input type="password" class="input" id="passwordtwo" autocomplete="off">
+             </div>
+        </div>
+        <div class="msg"><span class="hide" id="resTxt">test</span></div>
+        <div class="btn-group">
+            <div class="reg-btn" id="reg-btn">注册</div>
+        </div>
+        <div class="link-group">
+            <a href="./login.html" class="reg-link">已有账号？点此<span>登录</span></a>
+        </div>
+    </div>
+    <div class="tips">
+
+        <div class="zg"></div>
+        <div class="content"><span id="tips">出错啦</span><div id="ok">确定</div></div>
+    </div>
+    <script>
+        clickReg(function(res) {
+            res = JSON.parse(res);
+            var text = document.querySelector("#resTxt");
+            var regbtn = document.querySelector("#reg-btn");
+            if(res.data) {
+                window.location = "./login.html";
+            }
+            else {
+                text.className = "err";
+                text.innerHTML = res.msg;
+                regbtn.style.pointerEvents = "all";
+                regbtn.innerHTML = "注册";
+            }
+        });
+        clickOk(function() {});
+    </script>
+</body>
+</html>

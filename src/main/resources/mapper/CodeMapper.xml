@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.xinill.smart_photo.mapper.ICodeMapper">   <!--namespace必须为接口的全类名-->
+    <insert id="addCode">
+        INSERT INTO photoapp.phoneCode(phone, code) VALUES(#{phone}, #{code})
+    </insert>
+
+    <select id="getCode" resultType="string">
+        SELECT code
+        FROM photoapp.phoneCode
+        WHERE phone = #{phone}
+        ORDER BY cid DESC
+        LIMIT 0, 1
+    </select>
+</mapper>

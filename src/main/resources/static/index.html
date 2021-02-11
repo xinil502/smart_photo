@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>登录云相册</title>
+    <script src="../js/ajax.js"></script>
+    <script src="../js/login.js"></script>
+    <script src="../js/tips.js"></script>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/tips.css">
+    <script type="text/javascript">
+        window.onload = function(){
+            (function() {
+                var docElem = document.documentElement;
+                if(!(docElem.getBoundingClientRect().width > 860)) {
+                    docElem.style.fontSize = docElem.getBoundingClientRect().width / 16 + "px";
+                    docElem.style.width = docElem.getBoundingClientRect().width;
+                }
+                document.querySelector(".tips").style.height = window.innerHeight + "px";
+            })()
+        };
+    </script>
+    <style>
+
+    </style>
+
+</head>
+<body>
+<div class="login-box">
+    <div class="box-head-text">欢迎来到云相册</div>
+    <div class="input-group">
+        <div class="input-box">
+            <span class="input-text">用户名</span>
+            <input type="text" class="input" id="user" autocomplete="off">
+        </div>
+        <div class="input-box">
+            <span class="input-text">密码</span>
+            <input type="password" class="input" id="pwd" autocomplete="off">
+        </div>
+    </div>
+    <div class="msg"><span class="hide" id="resTxt">test</span></div>
+    <div class="btn-group">
+        <div class="login-btn" id="login-btn">登录</div>
+    </div>
+    <div class="link-group">
+        <a href="./reg.html" class="reg-link">没有账号？点此<span>注册</span></a>
+    </div>
+</div>
+<div class="tips">
+
+    <div class="zg"></div>
+    <div class="content"><span id="tips">出错啦</span><div id="ok">确定</div></div>
+</div>
+
+</body>
+<script>
+    clickLogin(function(res, token) {
+        if(token) {
+            localStorage.setItem("token", token);
+        }
+        res = JSON.parse(res);
+        if(res.data === true) {
+            window.location = "./album.html";
+        }
+        else {
+            var text = document.querySelector("#resTxt");
+            text.innerHTML = res.msg;
+            text.className = "err";
+            document.querySelector("#login-btn").innerHTML = "登陆";
+            document.querySelector("#login-btn").style.pointerEvents =  "all";
+        }
+    });
+    clickOk(function() {});
+</script>
+</html>

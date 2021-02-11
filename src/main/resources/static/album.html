@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>云相册</title>
+    <link rel="stylesheet" href="../css/album.css">
+    <link rel="stylesheet" href="../css/tips.css">
+    <script type="text/javascript">
+        window.onload = function(){
+            (function() {
+                var docElem = document.documentElement;
+                if(!(docElem.getBoundingClientRect().width > 1024)) {
+                    docElem.style.fontSize = docElem.getBoundingClientRect().width / 16 + "px";
+                    docElem.style.width = docElem.getBoundingClientRect().width;
+                }
+                document.querySelector(".tips").style.height = window.innerHeight + "px";
+            })()
+        };
+    </script>
+    <script src="../js/ajax.js"></script>
+    <script src="../js/public.js"></script>
+    <script src="../js/tips.js"></script>
+    <script src="../js/getHistory.js"></script>
+    <script src="../js/getUserInform.js"></script>
+    <script src="../js/album.js"></script>
+</head>
+<body>
+
+    <div class="main-content">
+        <div class="mob-header">
+            <div id="mob-user-btn">
+                <div class="h"></div>
+                <div class="h"></div>
+                <div class="h"></div>
+            </div>
+            <span class="mob-text">云相册</span>
+        </div>
+        <div class="user-content">
+            <div class="zgc"></div>
+            <div class="userView">
+                <div class="user">
+                    <div class="user_img">
+                        <div class="img">
+                            <img src="index.jpg" alt="#" width="100%" height="100%">
+                        </div>
+                    </div>
+                    <div class="user_name"><span>pcy</span></div>
+                </div>
+                <div class="userInform">
+                    <span>个人介绍：</span>
+                    <div class="self_introduce">我是sb</div>
+                    <div class="sex_and_age">
+                        <span id="sex">男</span>
+                        <span>&nbsp; &nbsp; &nbsp; &nbsp; </span>
+                        <span id="age">18</span>
+                    </div>
+                    <div class="birth"><span>生日：</span><span id="bir">2020-01-01</span></div>
+                    <div class="change_btn">
+                        <a href="./userInformation.html" id="change_inform">修改个人信息</a>
+                    </div>
+                    <div class="change_btn">
+                        <a href="./modPass.html" id="change_inform">修改密码</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="album">
+            <div class="user_input">
+                
+                <textarea name="text" id="img_text" cols="" rows="5"></textarea>
+                <div class="buttons">
+                    <label class="ui_button" id="choose">选择图片</label>
+                    <input type="text" id="fileName">
+                    <input type="file" accept="image/png, image/jpeg, image/gif, image/jpg" style="display: none;" id="file" onchange="change(this.value)" multiple="multiple">
+                    <div id="public">发布</div>
+                </div>
+            </div>
+            <div class="user_img_content">
+                <div class="img_and_text">
+                    <div class="img_time">12:20</div>
+                    <div class="img_text">woshisb</div>
+                    <div class="img">
+                        <img src="index.jpg" alt="出错了呢" width="100%">
+                    </div>
+                </div>
+                <div class="img_and_text">
+                    <div class="img_time">12:20</div>
+                    <div class="img_text">woshisb</div>
+                    <div class="img">
+                        <img src="index.jpg" alt="出错了呢" width="100%">
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="page">
+                <div id="last_page" class="pagec">上一页</div>
+                <span id="now_page" class="pagetext">1</span>
+                <span  class="pagetext">/</span>
+                <span id="all_page"  class="pagetext">17</span>
+                <div id="next_page" class="pagec">下一页</div>
+            </div>
+        </div>
+    </div>
+    <div class="tips">
+
+        <div class="zg"></div>
+        <div class="content"><span id="tips">出错啦</span><div id="ok">确定</div></div>
+    </div>
+    
+    <script>
+
+        //移动端设备
+        var now_page = parseInt(document.querySelector("#now_page").innerHTML);
+        var mob_user_btn = document.querySelector("#mob-user-btn");
+        mob_user_btn.addEventListener("click", function() {
+            document.querySelector(".user-content").style.display = "block";
+        });
+        document.querySelector(".zgc").addEventListener("click", function() {
+            document.querySelector(".user-content").style.display = "none";
+        })
+        document.querySelector("#choose").addEventListener("click", function() {
+            document.querySelector("#file").click();
+        });
+        function change(name) {
+            document.querySelector("#fileName").value = name;
+        }
+        
+        clickOk(function() {});
+        getHistory(now_page, sus_get_album);
+        getUserInform(function(res) {
+            res = JSON.parse(res);
+            if(res.status === 0) {
+                var img = document.querySelector(".user_img>.img>img");
+                var user = document.querySelector(".user_name>span");
+                var self_introduce = document.querySelector(".self_introduce");
+                var sex = document.querySelector("#sex");
+                var age = document.querySelector("#age");
+                var birth = document.querySelector(".birth>span#bir");
+                img.src = res.data.portrait;
+                user.innerHTML = res.data.username;
+                self_introduce.innerHTML = res.data.introduce;
+                sex.innerHTML = res.data.gender;
+                age.innerHTML = res.data.age;
+                birth.innerHTML = res.data.birth;
+            }
+            else if(res.status === 10) {
+                clickOk(function() {
+                    window.location = "./login.html";
+                });
+                tips("您未登陆");
+            }
+        });
+        clickPublic(function() {
+            getHistory(now_page, sus_get_album);
+        })
+        function clickPage() {
+            var last = document.querySelector("#last_page");
+            var next = document.querySelector("#next_page");
+            last.addEventListener("click", function() {
+                var now = parseInt(document.querySelector("#now_page").innerHTML);
+                var max = parseInt(document.querySelector("#all_page").innerHTML);
+
+                if(now > 1) {
+                    now--;
+                    getHistory(now, sus_get_album);
+                }
+            });
+            next.addEventListener("click", function() {
+                var now = parseInt(document.querySelector("#now_page").innerHTML);
+                var max = parseInt(document.querySelector("#all_page").innerHTML);
+                if(now < max) {
+                    now++;
+                    getHistory(now, sus_get_album);
+                }
+            });
+        }
+        clickPage();
+    </script>
+</body>
+</html>

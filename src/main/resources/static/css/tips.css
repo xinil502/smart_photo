@@ -1,0 +1,38 @@
+.tips {
+    display: none;
+    z-index: 1;
+    position: fixed;
+    top: 0;
+}
+.zg {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #22222249;
+    margin: 0;
+}
+.tips>.content {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16rem;
+    background-color: #fff;
+    font-size: 0.75rem;
+}
+.tips>.content>#tips {
+    display: block;
+    text-align: center;
+    margin: 1rem 0;
+    color: #222;
+}
+.tips>.content>#ok {
+    width: 3rem;
+    text-align: center;
+    line-height: 1.5rem;
+    margin: 1rem auto;
+    background-color: #222;
+    color: #fff;
+    cursor: pointer;
+}

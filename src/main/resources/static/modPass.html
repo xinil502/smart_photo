@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改密码</title>
+    <script src="../js/ajax.js"></script>
+    <script src="../js/tips.js"></script>
+    <script src="../js/modPass.js"></script>
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/tips.css">
+    <script type="text/javascript">
+        window.onload = function(){
+            (function() {
+                var docElem = document.documentElement;
+                if(!(docElem.getBoundingClientRect().width > 860)) {
+                    docElem.style.fontSize = docElem.getBoundingClientRect().width / 16 + "px";
+                    docElem.style.width = docElem.getBoundingClientRect().width;
+                }
+                document.querySelector(".tips").style.height = window.innerHeight + "px";
+            })()
+        };
+    </script>
+    <style>
+       
+    </style>
+    
+</head>
+<body>
+    <div class="login-box">
+        <div class="box-head-text">修改密码</div>
+        <div class="input-group">
+            <div class="input-box">
+               <span class="input-text">新密码</span>
+                <input type="password" class="input" id="pwd">
+            </div>
+            <div class="input-box">
+                <span class="input-text">确认密码</span>
+                 <input type="password" class="input" id="pwd">
+             </div>
+        </div>
+        <div class="msg"><span class="hide" id="resTxt">test</span></div>
+        <div class="btn-group">
+            <div class="mod-btn">确认修改</div>
+        </div>
+
+    </div>
+    <div class="tips">
+
+        <div class="zg"></div>
+        <div class="content"><span id="tips">出错啦</span><div id="ok">确定</div></div>
+    </div>
+    <script>
+        clickModPass(function(res){
+            res = JSON.parse(res);
+            if(res.data) {
+                clickOk(function() {
+                    window.location = "./login.html";
+                });
+                tips("修改成功");
+                
+                //跳转至登录
+            }
+            else {
+                document.querySelector("#mod-btn").style.pointerEvents = "all";
+                document.querySelector("#mod_btn").value = "确认修改";
+                tips(res.msg);
+            }
+
+        });
+        clickOk(function() {});
+    </script>
+</body>
+</html>

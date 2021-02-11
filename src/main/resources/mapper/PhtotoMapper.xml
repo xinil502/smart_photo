@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.xinill.smart_photo.mapper.IPhotoMapper">
+
+    <insert id="insertPhoto">
+        INSERT INTO photoapp.photo(uid, msg, name, time)
+        VALUES (#{uid}, #{text}, #{img_url}, #{time})
+    </insert>
+
+    <select id="selectPhotoByUserList" resultMap="photo">
+        SELECT * FROM photoapp.photo
+        WHERE uid = #{uid}
+        ORDER BY time DESC
+        LIMIT #{start}, #{length}
+    </select>
+
+    <select id="countPhotoByUser" resultType="_int">
+        SELECT COUNT(*) FROM photoapp.photo
+        WHERE uid = #{uid}
+    </select>
+
+    <resultMap id="photo" type="cn.xinill.smart_photo.pojo.Photo">
+        <id property="time" column="time"/>
+        <id property="text" column="msg"/>
+        <id property="img_url" column="name"/>
+    </resultMap>
+</mapper>
+
+

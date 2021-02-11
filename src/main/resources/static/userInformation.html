@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>修改个人信息</title>
+    <link rel="stylesheet" href="../css/userInform.css">
+    <script type="text/javascript">
+        window.onload = function(){
+            (function() {
+                var docElem = document.documentElement;
+                if(!(docElem.getBoundingClientRect().width > 1024)) {
+                    docElem.style.fontSize = docElem.getBoundingClientRect().width / 16 + "px";
+                    docElem.style.width = docElem.getBoundingClientRect().width;
+                }
+                document.querySelector(".tips").style.height = window.innerHeight + "px";
+            })();
+        };
+    </script>
+    <script src="../js/ajax.js"></script>
+    <script src="../js/tips.js"></script>
+    <script src="../js/modUserInform.js"></script>
+    <script src="../js/getUserInform.js"></script>
+
+</head>
+<body>
+
+    <div class="mainView">
+        <div class="head_content">
+            个人信息修改
+        </div>
+        <div class="main_content">
+           <div class="set_content">
+            <p class="set" id="user">
+                <span>用户名:</span>
+                <span id="user_name">pcy</span>
+            </p>
+            <p class="set" id="user_img">
+                <span>头像</span>
+                <span class="imgbox"><img src="index.jpg" alt="出错了呢" id="head_img" width="100%" height="100%"> </span>
+                <input type="file" accept="image/png, image/jpeg, image/gif, image/jpg" style="display: none;" id="file">
+                <label for="file" style="background-color: #222; color: #fff; padding: 0.5rem;">选择图片</label>
+            </p>
+            <p class="set">
+                <div style="vertical-align:top">个人介绍：</div>
+                <textarea name="self_introduce" id="self_introduce" cols="60" rows="4"></textarea>
+            </p>
+            <p class="set" id="sex">
+                <span class="text">性别：</span>
+                <select name="sex" id="set_sex">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </p>
+            <p class="set" id="age">
+                <span class="text">年龄：</span>
+                <input type="text" id="set-age">
+            </p>
+            <p class="set" id="birth">
+                <span class="text" style="vertical-align:top">生日：</span>
+                <span class="s"><select name="year" id="year" size="1" onmousedown="if(this.options.length>4){this.size=5}" onblur="this.size=0" onchange="this.size=0"></select></span>
+                <span class="s"><select name="mon" id="mon" size="1"onmousedown="if(this.options.length>4){this.size=5}" onblur="this.size=0" onchange="this.size=0"></select></span>
+                <span class="s"><select name="day" id="day" size="1"onmousedown="if(this.options.length>4){this.size=5}" onblur="this.size=0" onchange="this.size=0"></select></span>
+                
+  
+
+            </p>
+           </div>
+        </div>
+        <div class="foot">
+            <div class="submit">提交</div>
+        </div>
+    </div>
+    <div class="tips">
+
+        <div class="zg"></div>
+        <div class="content"><span id="tips">出错啦</span><div id="ok">确定</div></div>
+    </div>
+    <script>
+        clickOk(function() {});
+        getUserInform(function(res) {
+            res = JSON.parse(res);
+            if(res.status === 0) {
+                var img = document.querySelector("#head_img");
+                var user = document.querySelector("#user_name");
+                var self_introduce = document.querySelector("#self_introduce");
+                var sex = document.querySelector("#set_sex");
+                var age = document.querySelector("#set-age");
+                var year = document.querySelector("#year");
+                var mon = document.querySelector("#mon");
+                var day = document.querySelector("#day");
+                img.src = res.data.portrait;
+                user.innerHTML = res.data.username;
+                self_introduce.value = res.data.introduce;
+                sex.value = res.data.gender;
+                age.value = res.data.age;
+                var birth = res.data.birth.split('-');
+                for(var i = 0; i < birth.length; i++){
+                    if(parseInt(birth[i]) < 10) {
+                        birth[i] = birth[i].replace(/^[0]/, "");
+                    }
+                }
+                year.value = birth[0];
+                mon.value = birth[1];
+                day.value = birth[2];
+            }
+            else if(res.status === 10) {
+                clickOk(function() {
+                    window.location = "./login.html";
+                });
+                tips("您未登陆");
+            }
+        });
+        (function() {
+            var date = new Date();
+            for(var i = 0; i < 100; i++) {
+                var option = document.createElement("option");
+                option.value = date.getFullYear() - i;
+                option.innerHTML = date.getFullYear() - i;
+                document.querySelector("#year").appendChild(option);
+            }
+            for(var i = 1; i < 13; i++){
+                var option = document.createElement("option");
+                option.value = i;
+                option.innerHTML = i;
+                document.querySelector("#mon").appendChild(option);
+            }
+            for(var i = 1; i < 32; i++) {
+                var option = document.createElement("option");
+                option.value = i;
+                option.innerHTML = i;
+                document.querySelector("#day").appendChild(option);
+            }
+        })();
+        modUserInform(function(res){
+            res = JSON.parse(res);
+            if(res.data) {
+                clickOk(function() {
+                    window.location = "./album.html";
+                });
+                tips("修改成功");
+            }
+        }); 
+    </script>
+</body>
+</html>
