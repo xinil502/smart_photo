@@ -2,6 +2,7 @@ package cn.xinill.smart_photo.Controller;
 
 import cn.xinill.smart_photo.common.ServerResponse;
 import cn.xinill.smart_photo.mapper.ICodeMapper;
+import cn.xinill.smart_photo.pojo.LoginResponse;
 import cn.xinill.smart_photo.pojo.User;
 import cn.xinill.smart_photo.service.ITokenService;
 import cn.xinill.smart_photo.service.IUserService;
@@ -55,62 +56,6 @@ public class UserController {
     }
 
     /**
-     * 用户注册-发送验证码
-     */
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, value = "/logon/getCode")
-    public ServerResponse<Boolean> logOnGetCode(@RequestParam String phone) {
-        if(phone == null || phone.length() != 11){
-            return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
-        }
-        try {
-            boolean exist = userService.phoneExist(phone);
-            if (exist) {
-                return ServerResponse.createByErrorMsgData("该手机号已被注册，请直接登录", false);
-            }else {
-                String code = SMSUtils.sendLOG_ON(phone);
-                codeMapper.addCode(phone, code);
-                return ServerResponse.createBySuccessMsgData("验证码已发送", true);
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
-        }
-    }
-
-
-    /**
-     * 用户注册-验证验证码
-     */
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, value = "/logon/judgeCode")
-    public ServerResponse<Boolean> logOnJudgeCode(@RequestParam String phone,
-                                                  @RequestParam String code,
-                                                  HttpServletResponse response) {
-        if(phone == null || phone.length() != 11){
-            return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
-        }
-        try {
-            boolean exist = userService.phoneExist(phone);
-            if (exist) {
-                return ServerResponse.createByErrorMsgData("该手机号已被注册，请直接登录", false);
-            }else { //手机号未被注册
-                if(code.equals(codeMapper.getCode(phone))){ //验证码验证成功
-                    userService.logOn(phone);//手机号注册
-                    int uid = userService.logIn(phone);
-                    response.addHeader("token", tokenService.creatUserToken(uid));//获取uid
-                    return ServerResponse.createBySuccessData(true);
-                }else{
-                    return ServerResponse.createByErrorMsgData("验证码不正确", false);
-                }
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
-        }
-    }
-
-    /**
      * 用户登陆-发送验证码
      */
     @ResponseBody
@@ -120,14 +65,9 @@ public class UserController {
             return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
         }
         try {
-            boolean exist = userService.phoneExist(phone);
-            if (exist) {
-                String code = SMSUtils.sendLOG_IN(phone);
-                codeMapper.addCode(phone, code);
-                return ServerResponse.createBySuccessMsgData("验证码已发送", true);
-            }else {
-                return ServerResponse.createByErrorMsgData("该手机号还未注册，请注册后登录", false);
-            }
+            String code = SMSUtils.sendLOG_IN(phone);
+            codeMapper.addCode(phone, code);
+            return ServerResponse.createBySuccessMsgData("验证码已发送", true);
         }catch (Exception e) {
             e.printStackTrace();
             return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
@@ -140,28 +80,29 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/login/judgeCode")
-    public ServerResponse<Boolean> logInJudgeCode(@RequestParam String phone,
-                                                  @RequestParam String code,
-                                                  HttpServletResponse response) {
+    public ServerResponse<LoginResponse> logInJudgeCode(@RequestParam String phone,
+                                                        @RequestParam String code,
+                                                        HttpServletResponse response) {
+
         if(phone == null || phone.length() != 11){
-            return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
+            return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", new LoginResponse(false,false));
         }
         try {
-            boolean exist = userService.phoneExist(phone);
-            if (exist) {
-                if(code.equals(codeMapper.getCode(phone))){ //验证码验证成功
-                    int uid = userService.logIn(phone);
-                    response.addHeader("token", tokenService.creatUserToken(uid));//获取uid
-                    return ServerResponse.createBySuccessData(true);
-                }else{
-                    return ServerResponse.createByErrorMsgData("验证码不正确", false);
+            if(code.equals(codeMapper.getCode(phone))) { //验证码验证成功
+                boolean exist = userService.phoneExist(phone);
+                if (!exist){
+                    userService.logOn(phone);//手机号注册
                 }
-            }else { //手机号未被注册
-                return ServerResponse.createByErrorMsgData("该手机号已被注册，请直接登录", false);
+
+                int uid = userService.logIn(phone);
+                response.addHeader("token", tokenService.creatUserToken(uid));//获取uid
+                return ServerResponse.createBySuccessData(new LoginResponse(true, exist));
+            } else {
+                return ServerResponse.createByErrorMsgData("验证码不正确", new LoginResponse(false,false));
             }
         }catch (Exception e) {
             e.printStackTrace();
-            return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
+            return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", new LoginResponse(false,false));
         }
     }
 
