@@ -27,26 +27,21 @@ public class LoginFilter implements Filter {
         try {
             String token = ((HttpServletRequest)request).getHeader("token");
             if(token == null){
-                System.err.println("需要登陆");//----------------------------
-                request.getRequestDispatcher("/login.html").forward(request, response);
-                return;
+                System.err.println("token 为null");
+//                request.getRequestDispatcher("/login.html").forward(request, response);
+//                return;
+            }else{
+                id = new TokenServiceImpl().verifyUserToken(token);
+                System.out.println("获取token id=" + id);
             }
-            id = new TokenServiceImpl().verifyUserToken(token);
-            System.out.println("id=" + id);
+            request.setAttribute("uid", id);
+            filterChain.doFilter(request,response);
         } catch (Exception e) {//需要登陆
             e.printStackTrace();
-            System.err.println("需要登陆");//----------------------------
-            request.getRequestDispatcher("/login.html").forward(request, response);
+            System.err.println("需要登陆");
+            //request.getRequestDispatcher("/login.html").forward(request, response);
         }
-        if(id > 0){
-            System.out.println("成功获取token");
-            request.setAttribute("uid", id);
-            HttpServletResponse r = (HttpServletResponse)response;
-//            r.addHeader("Access-Control-Allow-Origin", "*");
-//            r.addHeader("Access-Control-Allow-Headers", "Content-Type");
-//            r.addHeader("Access-Control-Allow-Methods", "*");
-            filterChain.doFilter(request,r);
-        }
+
     }
 
     @Override

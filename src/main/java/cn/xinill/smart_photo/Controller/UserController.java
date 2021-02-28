@@ -10,6 +10,8 @@ import cn.xinill.smart_photo.utils.ImgException;
 import cn.xinill.smart_photo.utils.OSSClientUtil;
 import cn.xinill.smart_photo.utils.SMSUtils;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,14 +58,39 @@ public class UserController {
     }
 
     /**
+     * 用户手机号密码登陆
+     */
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST , value = "/login/password")
+    public ServerResponse<Boolean> logIn(@RequestParam String phone,
+                                         @RequestParam String password,
+                                         HttpServletResponse response){
+        try {
+            int uid = userService.logIn(phone, password);
+            if(uid == -1){
+                return ServerResponse.createBySuccessMsgData("密码错误", false);
+            }else{
+                response.addHeader("token", tokenService.creatUserToken(uid));
+                return ServerResponse.createBySuccessMsgData("密码正确", true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
+        }
+    }
+
+    /**
      * 用户登陆-发送验证码
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/login/getCode")
     public ServerResponse<Boolean> logInGetCode(@RequestParam String phone) {
+        //手机号合法性验证
         if(phone == null || phone.length() != 11){
             return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
         }
+
+        //发送验证码
         try {
             String code = SMSUtils.sendLOG_IN(phone);
             codeMapper.addCode(phone, code);
@@ -74,7 +101,6 @@ public class UserController {
         }
     }
 
-
     /**
      * 用户登陆-验证验证码
      */
@@ -83,10 +109,12 @@ public class UserController {
     public ServerResponse<LoginResponse> logInJudgeCode(@RequestParam String phone,
                                                         @RequestParam String code,
                                                         HttpServletResponse response) {
-
+        //手机号合法性验证
         if(phone == null || phone.length() != 11){
             return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", new LoginResponse(false,false));
         }
+
+        //验证登陆
         try {
             if(code.equals(codeMapper.getCode(phone))) { //验证码验证成功
                 boolean exist = userService.phoneExist(phone);
@@ -109,39 +137,90 @@ public class UserController {
 
 
     /**
-     * 用户手机号密码登陆
+     * 找回密码-发送验证码
      */
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST , value = "/login/password")
-    public ServerResponse<Boolean> logIn(@RequestParam String phone,
-                                         @RequestParam String password, HttpServletResponse response){
+    @RequestMapping(method = RequestMethod.POST , value = "/updatepassword/getCode")
+    public ServerResponse<Boolean> findPassword(@RequestParam String phone){
+        //手机号合法性验证
+        if(phone == null || phone.length() != 11){
+            return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
+        }
+
+        //发送验证码
         try {
-            int uid = userService.logIn(phone, password);
-            if(uid == -1){
-                return ServerResponse.createBySuccessMsgData("密码错误", false);
-            }else{
-                response.addHeader("token", tokenService.creatUserToken(uid));
-                return ServerResponse.createBySuccessMsgData("密码正确", true);
+            String code = SMSUtils.sendUPDATE(phone);
+            codeMapper.addCode(phone, code);
+            return ServerResponse.createBySuccessMsgData("验证码已发送", true);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
+        }
+    }
+
+    /**
+     * 找回密码-验证验证码，未注册进行注册，修改密码
+     */
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST , value = "/updatepassword/judgeCode")
+    public ServerResponse<Boolean> findPassword(@RequestParam String phone,
+                                                @RequestParam String code,
+                                                @RequestParam String password){
+        try {
+            //手机号合法性验证
+            if(phone == null || phone.length() != 11){
+                return ServerResponse.createByErrorCodeMsgData(2, "手机号不合法", false);
             }
-        } catch (Exception e) {
+
+            //处理密码长度
+            if(password.length() < 6){
+                return ServerResponse.createByErrorMsgData("用户密码长度不得少于6", false);
+            }else if(password.length() >20){
+                return ServerResponse.createByErrorMsgData("用户密码长度不得大于20", false);
+            }
+
+            //验证验证码
+            if(code.equals(codeMapper.getCode(phone))) { //验证码验证成功
+                //判断是否需要注册
+                if (!userService.phoneExist(phone)){
+                    userService.logOn(phone);//手机号注册
+                }
+
+                //获取用户 uid
+                int uid = userService.logIn(phone);
+                System.out.println("用户"+uid+"修改密码为"+password);
+
+                //修改密码
+                if(userService.updateUserPwd(uid, password)){
+                    return ServerResponse.createBySuccessMsgData("密码修改成功", true);
+                }
+                System.err.println("用户"+uid+"修改密码失败");
+                return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
+            } else {
+                return ServerResponse.createByErrorMsgData("验证码不正确", false);
+            }
+        }catch (Exception e) {
             e.printStackTrace();
             return ServerResponse.createByErrorMsgData("服务器异常，请赶快通知任!!!", false);
         }
     }
 
 
-
-    /**
-     * 重要信息修改-发送验证码
-     */
+        /**
+         * 重要信息修改-发送验证码
+         */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/inform/importantChange/getCode")
     public ServerResponse<Boolean> importantInformGetCode(ServletRequest request) {
         try {
-            //通过token获取手机号
+            //处理token验证
             int uid = (Integer)request.getAttribute("uid");
-            User user = userService.findUserByUid(uid);
+            if(uid == -1){
+                return ServerResponse.createByErrorCodeMsgData(10, "需要token登陆", false);
+            }
 
+            //查询用户信息
+            User user = userService.findUserByUid(uid);
             //发送验证码
             String code = SMSUtils.sendUPDATE(user.getPhone());
             codeMapper.addCode(user.getPhone(), code);
@@ -160,7 +239,13 @@ public class UserController {
     public ServerResponse<Boolean> importantInformJudgeCode(@RequestParam String code,
                                                             ServletRequest request) {
         try {
+            //处理token验证
             int uid = (Integer)request.getAttribute("uid");
+            if(uid == -1){
+                return ServerResponse.createByErrorCodeMsgData(10, "需要token登陆", false);
+            }
+
+            //查询用户信息
             User user = userService.findUserByUid(uid);
             if(code.equals(codeMapper.getCode(user.getPhone()))){ //验证码验证成功
                 return ServerResponse.createBySuccessData(true);
@@ -180,12 +265,20 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, value = "/inform/updatepwd")
     public ServerResponse<Boolean> updatePwd(@RequestParam String password, ServletRequest request) {
         try {
+            //处理token验证
             int uid = (Integer)request.getAttribute("uid");
+            if(uid == -1){
+                return ServerResponse.createByErrorCodeMsgData(10, "需要token登陆", false);
+            }
+
+            //处理密码长度
             if(password.length() < 6){
                 return ServerResponse.createByErrorMsgData("用户密码长度不得少于6", false);
             }else if(password.length() >20){
                 return ServerResponse.createByErrorMsgData("用户密码长度不得大于20", false);
             }
+
+            //修改密码
             System.out.println("用户"+uid+"修改密码为"+password);
             if(userService.updateUserPwd(uid, password)){
                 return ServerResponse.createBySuccessMsgData("密码修改成功", true);
@@ -205,7 +298,13 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, value = "/inform/get")
     public ServerResponse<User> getUserMessage(ServletRequest request){
         try {
+            //处理token验证
             int uid = (Integer)request.getAttribute("uid");
+            if(uid == -1){
+                return ServerResponse.createByErrorCodeMsgData(10, "需要token登陆", null);
+            }
+
+            //查询用户信息
             User user = userService.findUserByUid(uid);
             if(user!=null){
                 user.setPassword(null);
@@ -234,7 +333,12 @@ public class UserController {
                                                 String birthday,
                                                 Integer age,
                                                 String introduce) {
+        //处理token验证
         int uid = (Integer)request.getAttribute("uid");
+        if(uid == -1){
+            return ServerResponse.createByErrorCodeMsgData(10, "需要token登陆", false);
+        }
+
         //处理昵称
         if (username != null) {
             if(username.length() < 1){
@@ -284,7 +388,7 @@ public class UserController {
                     birth.append("0");
                 }
                 birth.append(b[2]);
-                birth.append(" 09"); //解决java.Date 与 MySQL时区不一致的问题
+                birth.append(" 09"); //+ 9小时。解决java.Date 与 MySQL时区不一致的问题
                 simpleDateFormat= new SimpleDateFormat("yyyy-MM-dd HH");
             }else{
                 System.err.println("用户"+uid+"日期格式不正确");
@@ -307,6 +411,7 @@ public class UserController {
                 return ServerResponse.createByErrorMsgData("个人简介信息最长为255字符", false);
             }
         }
+
 
         try{
             System.out.println("用户"+uid+": 信息处理完毕");
