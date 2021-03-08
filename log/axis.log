@@ -1,0 +1,68 @@
+2021-03-08 14:56:56,465 0      [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10001,procId-7531} connected
+2021-03-08 14:56:57,125 660    [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10002,procId-7532} connected
+2021-03-08 14:56:57,552 1087   [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10003,procId-7533} connected
+2021-03-08 14:56:57,988 1523   [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10004,procId-7534} connected
+2021-03-08 14:56:58,397 1932   [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10005,procId-7535} connected
+2021-03-08 14:56:58,496 2031   [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10005} pool-connect
+2021-03-08 14:56:58,702 2237   [p-nio-80-exec-1] DEBUG            druid.sql.Statement  - {conn-10005, pstmt-20000} created. SELECT * FROM photoapp.user WHERE uid = ?
+2021-03-08 14:56:58,707 2242   [p-nio-80-exec-1] DEBUG            druid.sql.Statement  - {conn-10005, pstmt-20000} Parameters : [0]
+2021-03-08 14:56:58,707 2242   [p-nio-80-exec-1] DEBUG            druid.sql.Statement  - {conn-10005, pstmt-20000} Types : [INTEGER]
+2021-03-08 14:56:58,747 2282   [p-nio-80-exec-1] DEBUG            druid.sql.Statement  - {conn-10005, pstmt-20000} executed. 42.9846 millis. SELECT * FROM photoapp.user WHERE uid = ?
+2021-03-08 14:56:58,751 2286   [p-nio-80-exec-1] DEBUG            druid.sql.ResultSet  - {conn-10005, pstmt-20000, rs-50000} open
+2021-03-08 14:56:58,752 2287   [p-nio-80-exec-1] DEBUG            druid.sql.ResultSet  - {conn-10005, pstmt-20000, rs-50000} Header: [uid, username, pwd, portrait, age, gender, phone, email, birth, introduce]
+2021-03-08 14:56:58,755 2290   [p-nio-80-exec-1] DEBUG            druid.sql.ResultSet  - {conn-10005, pstmt-20000, rs-50000} closed
+2021-03-08 14:56:58,756 2291   [p-nio-80-exec-1] DEBUG            druid.sql.Statement  - {conn-10005, pstmt-20000} clearParameters. 
+2021-03-08 14:56:58,757 2292   [p-nio-80-exec-1] DEBUG           druid.sql.Connection  - {conn-10005} pool-recycle
+2021-03-08 14:59:45,404 168939 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10005} closed
+2021-03-08 14:59:45,447 168982 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10004} closed
+2021-03-08 14:59:45,486 169021 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10003} closed
+2021-03-08 14:59:45,522 169057 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10002} closed
+2021-03-08 14:59:45,555 169090 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10001} closed
+2021-03-08 14:59:45,836 169371 [eate-1640466951] DEBUG           druid.sql.Connection  - {conn-10006,procId-7536} connected
+2021-03-08 14:59:45,950 169485 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10006} pool-connect
+2021-03-08 14:59:45,965 169500 [p-nio-80-exec-7] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20001} created. INSERT INTO photoapp.phoneCode(phone, code) VALUES(?, ?)
+2021-03-08 14:59:45,966 169501 [p-nio-80-exec-7] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20001} Parameters : [15319730308, 938083]
+2021-03-08 14:59:45,966 169501 [p-nio-80-exec-7] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20001} Types : [VARCHAR, VARCHAR]
+2021-03-08 14:59:46,090 169625 [p-nio-80-exec-7] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20001} executed. 124.7169 millis. INSERT INTO photoapp.phoneCode(phone, code) VALUES(?, ?)
+2021-03-08 14:59:46,090 169625 [p-nio-80-exec-7] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20001} clearParameters. 
+2021-03-08 14:59:46,090 169625 [p-nio-80-exec-7] DEBUG           druid.sql.Connection  - {conn-10006} pool-recycle
+2021-03-08 15:00:23,517 207052 [p-nio-80-exec-4] DEBUG           druid.sql.Connection  - {conn-10006} pool-connect
+2021-03-08 15:00:23,550 207085 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20002} created. SELECT code
+        FROM photoapp.phoneCode
+        WHERE phone = ?
+        ORDER BY cid DESC
+        LIMIT 0, 1
+2021-03-08 15:00:23,550 207085 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20002} Parameters : [15319730308]
+2021-03-08 15:00:23,550 207085 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20002} Types : [VARCHAR]
+2021-03-08 15:00:23,587 207122 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20002} executed. 36.9149 millis. SELECT code
+        FROM photoapp.phoneCode
+        WHERE phone = ?
+        ORDER BY cid DESC
+        LIMIT 0, 1
+2021-03-08 15:00:23,587 207122 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20002, rs-50001} open
+2021-03-08 15:00:23,587 207122 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20002, rs-50001} Header: [code]
+2021-03-08 15:00:23,589 207124 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20002, rs-50001} Result: [938083]
+2021-03-08 15:00:23,593 207128 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20002, rs-50001} closed
+2021-03-08 15:00:23,593 207128 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20002} clearParameters. 
+2021-03-08 15:00:23,593 207128 [p-nio-80-exec-4] DEBUG           druid.sql.Connection  - {conn-10006} pool-recycle
+2021-03-08 15:00:23,593 207128 [p-nio-80-exec-4] DEBUG           druid.sql.Connection  - {conn-10006} pool-connect
+2021-03-08 15:00:23,594 207129 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} created. SELECT * FROM photoapp.user WHERE phone = ?;
+2021-03-08 15:00:23,594 207129 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} Parameters : [15319730308]
+2021-03-08 15:00:23,594 207129 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} Types : [VARCHAR]
+2021-03-08 15:00:23,632 207167 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} executed. 37.8368 millis. SELECT * FROM photoapp.user WHERE phone = ?;
+2021-03-08 15:00:23,633 207168 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50002} open
+2021-03-08 15:00:23,633 207168 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50002} Header: [uid, username, pwd, portrait, age, gender, phone, email, birth, introduce]
+2021-03-08 15:00:23,634 207169 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50002} Result: [26, null, 123456, default.png, 0, —, 15319730308, null, 2001-01-01 09:00:00.0, hello world]
+2021-03-08 15:00:23,635 207170 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50002} closed
+2021-03-08 15:00:23,636 207171 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} clearParameters. 
+2021-03-08 15:00:23,636 207171 [p-nio-80-exec-4] DEBUG           druid.sql.Connection  - {conn-10006} pool-recycle
+2021-03-08 15:00:23,636 207171 [p-nio-80-exec-4] DEBUG           druid.sql.Connection  - {conn-10006} pool-connect
+2021-03-08 15:00:23,636 207171 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} Parameters : [15319730308]
+2021-03-08 15:00:23,636 207171 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} Types : [VARCHAR]
+2021-03-08 15:00:23,674 207209 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} executed. 38.4484 millis. SELECT * FROM photoapp.user WHERE phone = ?;
+2021-03-08 15:00:23,674 207209 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50003} open
+2021-03-08 15:00:23,674 207209 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50003} Header: [uid, username, pwd, portrait, age, gender, phone, email, birth, introduce]
+2021-03-08 15:00:23,674 207209 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50003} Result: [26, null, 123456, default.png, 0, —, 15319730308, null, 2001-01-01 09:00:00.0, hello world]
+2021-03-08 15:00:23,675 207210 [p-nio-80-exec-4] DEBUG            druid.sql.ResultSet  - {conn-10006, pstmt-20003, rs-50003} closed
+2021-03-08 15:00:23,675 207210 [p-nio-80-exec-4] DEBUG            druid.sql.Statement  - {conn-10006, pstmt-20003} clearParameters. 
+2021-03-08 15:00:23,675 207210 [p-nio-80-exec-4] DEBUG           druid.sql.Connection  - {conn-10006} pool-recycle
