@@ -28,9 +28,12 @@ public class DruidConfig {
         return new DruidDataSource();
     }
 
+    /**
+     * 配置 Druid后台监控，内置了servlet容器， 使用 ServletRegistrationBean来替代 web.xml
+     */
     @Bean
     public ServletRegistrationBean<Servlet> statViewServlet() {
-        // 进行 druid 监控的配置处理
+        //创建servlet注册实体
         ServletRegistrationBean<Servlet> srb = new ServletRegistrationBean<>(new StatViewServlet(), "/druid/*");
         // 白名单
         srb.addInitParameter("allow", "127.0.0.1");
@@ -45,13 +48,18 @@ public class DruidConfig {
         return srb;
     }
 
+    /**
+     *     Filter 过滤器
+     */
     @Bean
     public FilterRegistrationBean<Filter> filterRegistrationBean() {
+        //创建过滤器
         FilterRegistrationBean<Filter> frb = new FilterRegistrationBean<>();
+        //设置过滤器
         frb.setFilter(new WebStatFilter());
         // 所有请求进行监控处理
         frb.addUrlPatterns("/*");
-        // 排除名单
+        // 设置排除的请求名单
         frb.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.css,/druid/*");
         return frb;
     }

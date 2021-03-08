@@ -5,7 +5,7 @@ server:
       force-response: true
   port: 80
 spring:
-  #datasource--mysql的数据库配置
+  # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://47.100.137.85:3306/photoapp?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
@@ -35,14 +35,14 @@ spring:
     use-global-data-source-stat: true
     # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
     connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
-
-    tomcat:
-      max-active: 20
-      max-idle: 8
-      min-idle: 8
-      initial-size: 10
-    hikari:
-      max-lifetime: 500000
+#
+#    tomcat:
+#      initial-size: 10
+#      max-active: 20
+#      max-idle: 8
+#      min-idle: 8
+#    hikari:
+#      max-lifetime: 500000
   jackson:
     #返回的JSON数据中如果属性未NULL时，不序列化该键值对。(全服务设置，谨慎使用)
     default-property-inclusion: non_null
